@@ -6,19 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2019 | Python 水滴石穿</title>
+  <title>用户鉴权和验权模块设计 | Python 水滴石穿</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="66666">
-<meta name="keywords" content="python">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Python 水滴石穿">
-<meta property="og:url" content="http://yoursite.com/archives/2019/index.html">
+  <meta name="description" content="(Java) 鉴权和验权模块设计权限模块首先需要了解过滤器和拦截器这两部分的内容：过滤器和拦截器都属于AOP（面向切面编程）思想的具体实现，系统层面上的问题类似权限，日志，事务等都可以通过AOP的思想来解决。 过滤器依赖servlet容器，而且不由Web服务器执行，是在容器回调用完成，可以修改request和response，所以CORS(后续补充文章介绍CORS)是在过滤器中设计完成。拦截器首先">
+<meta name="keywords" content="设计模式,Java,SoftUniversalComponents">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用户鉴权和验权模块设计">
+<meta property="og:url" content="http://yoursite.com/2019/07/24/permission/index.html">
 <meta property="og:site_name" content="Python 水滴石穿">
-<meta property="og:description" content="66666">
+<meta property="og:description" content="(Java) 鉴权和验权模块设计权限模块首先需要了解过滤器和拦截器这两部分的内容：过滤器和拦截器都属于AOP（面向切面编程）思想的具体实现，系统层面上的问题类似权限，日志，事务等都可以通过AOP的思想来解决。 过滤器依赖servlet容器，而且不由Web服务器执行，是在容器回调用完成，可以修改request和response，所以CORS(后续补充文章介绍CORS)是在过滤器中设计完成。拦截器首先">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/JPFrank/image/blob/master/lc.jpg">
+<meta property="og:updated_time" content="2019-07-24T06:53:13.438Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python 水滴石穿">
-<meta name="twitter:description" content="66666">
+<meta name="twitter:title" content="用户鉴权和验权模块设计">
+<meta name="twitter:description" content="(Java) 鉴权和验权模块设计权限模块首先需要了解过滤器和拦截器这两部分的内容：过滤器和拦截器都属于AOP（面向切面编程）思想的具体实现，系统层面上的问题类似权限，日志，事务等都可以通过AOP的思想来解决。 过滤器依赖servlet容器，而且不由Web服务器执行，是在容器回调用完成，可以修改request和response，所以CORS(后续补充文章介绍CORS)是在过滤器中设计完成。拦截器首先">
+<meta name="twitter:image" content="https://github.com/JPFrank/image/blob/master/lc.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Python 水滴石穿" type="application/atom+xml">
   
@@ -158,43 +161,221 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-permission" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      用户鉴权和验权模块设计
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/07/24/sort-and-find/" class="archive-article-date">
-  	<time datetime="2019-07-24T07:49:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-24</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+        
+        <a href="/2019/07/24/permission/" class="archive-article-date">
+  	<time datetime="2019-07-24T06:27:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>(Java) 鉴权和验权模块设计<br><br><br>权限模块首先需要了解过滤器和拦截器这两部分的内容：<br><br>过滤器和拦截器都属于AOP（面向切面编程）思想的具体实现，系统层面上的问题类似权限，日志，事务等都可以通过AOP的思想来解决。</p>
+<p>过滤器依赖servlet容器，而且不由Web服务器执行，是在容器回调用完成，可以修改request和response，所以CORS(后续补充文章介绍CORS)是在过滤器中设计完成。<br>拦截器首先是属于Web应用的，拦截器可以通过DI来使用工厂中的其他实例实现拦截器的逻辑(这里又有一大坨思想的理解与介绍，大致方向为：单例-&gt;DI-&gt;IOC-&gt;23种设计模式 <del>&gt;.&lt;</del>，后续慢慢补充自己的理解，这里其实是最基础也是最重要的关于我们用的东西到底是如何产生的)<br>总结就是进入Web服务器之前，可以称为Filter,进入Web服务器之后，称为Interceptor.</p>
+<p>回归正题，权限模块主要用到拦截器<br>大体思路如下：<br><br>  涉及到权限到时候，最重要到一步就是表结构设计，User表，Permission表，Role表，User_role表，Role_Permission表。具体表结构参考上传的代码。<br>大体流程如下：<br><br>  0.在数据库中配置好所有的权限信息，给用户分配角色，给角色分配权限，通过这样的关联关系，能够通过用户来获取对应的权限信息。<br><br>  1.用户登录之后，将用户信息和用户相关的权限信息存入Redis中，以User_Id 通过Hash加密算法(SHA-256,加密算法后续继续总结)得到SessioID作为Key，相关信息作为Value，然后在利用JWT将SessionID封装为Token。<br><br>  2.登录之后将Token返给前端，前端每次发起新的请求的时候，在request head里面都需要将Token带着传递到后台。<br><br>  3.JWT拦截器获取到Head里面到Token，解析Token取出登录时存入Redis的相关信息，封装成对应User对象传递给权限拦截器。<br><br>  4.Permission拦截器获取到用户相关信息之后，循环对比request的method和URL，如果匹配成功，说明该用户的这个操作，之前在数据库中就被允许，也就是该用户有权限这么做；如果没有匹配，则抛出该用户没有此操作权限的异常。<br></p>
+<p>登录封装Token代码：<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String token = JwtUtil.createToken(sessionId, jwtSceret, jwtExpiredTime);</span><br><span class="line">String refreshToken = JwtUtil.getRefreshToken(sessionId, jwtSceret, jwtExpiredWeekTime);</span><br></pre></td></tr></table></figure></p>
+<p> createToken具体实现：<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Jwts.builder().setSubject(sessionId.toString())</span><br><span class="line">              .claim(&quot;sessionId&quot;, sessionId.toString())</span><br><span class="line">              .setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + expiredTime))</span><br><span class="line">              .signWith(SignatureAlgorithm.HS256, jwtSceret).compact())</span><br></pre></td></tr></table></figure></p>
+<p>refreshToken是先判断当前Token是否过期，过期就重新再次生成新的Token。</p>
+<p> 这里封装Token使用的是JWT模块，用于Json对象在传输信息时的一种规范，这里的Token是可以被验证和信任，官方原话如下：JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.<br> 具体JWT结构以及用法可以参考<a href="https://jwt.io/" target="_blank" rel="noopener">JWT官网</a>。</p>
+<p> 前端接受登录返回到Token信息之后，需要在每次请求的head中，带上这个令牌传给后端。请求进入拦截器。<br> 拦截器的实现方式其实很简单，可以自己定义一个Interceptor类继承<a href="https://docs.spring.io/spring/docs/5.0.4.BUILD-SNAPSHOT/javadoc-api/org/springframework/web/servlet/HandlerInterceptor.html" target="_blank" rel="noopener">HandlerInterceptor</a>/<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/request/WebRequestInterceptor.html" target="_blank" rel="noopener">WebRequestInterceptor</a>接口类，或者它实现类HandlerInterceptor/WebRequestInterceptor接口方法(通常直接使用这种，简单便捷)。最后在对应的Config中实例化拦截器，然后在addInterceptors中将其添加到对应到拦截器链中。<br><br> <br><br> 添加到拦截器链中：<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line"> public void addInterceptors(InterceptorRegistry registry) &#123;</span><br><span class="line">     registry.addInterceptor(jwtInterceptor())</span><br><span class="line">             .addPathPatterns(&quot;/**&quot;);</span><br><span class="line">     registry.addInterceptor(permissionInterceptor())</span><br><span class="line">             .addPathPatterns(&quot;/**&quot;)</span><br><span class="line">             .excludePathPatterns(&quot;/xxx/**&quot;);</span><br><span class="line">     super.addInterceptors(registry);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+  <br>
+  拦截器jwtInterceptor功能代码如下：
+
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean preHandle(HttpServletRequest request, HttpServletResponse reponse, Object handle) throws Exception &#123;</span><br><span class="line">    if (&quot;OPTIONS&quot;.equals(request.getMethod().toUpperCase())) &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    logger.debug(&quot;拦截器1执行-----preHandle&quot;);</span><br><span class="line">    String authHeader = request.getHeader(JWT_TOKEN_KEY);</span><br><span class="line">    if (Strings.isNullOrEmpty(authHeader) || !authHeader.startsWith(JWT_HEADER_PREFIX)) &#123;</span><br><span class="line">        throw new UnauthorizedException();</span><br><span class="line">    &#125;</span><br><span class="line">    String token = authHeader.substring(JWT_HEADER_PREFIX.length() + 1);</span><br><span class="line">    if (!JwtUtil.validateToken(token, JWT_SECRET)) &#123;</span><br><span class="line">        throw new UnauthorizedException(&quot;token 过期&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    String sessionId = JwtUtil.getSessionId(token, JWT_SECRET);</span><br><span class="line">    UserAuthDTO userAuth = (UserAuthDTO) redisTemplate.opsForValue().get(sessionId);</span><br><span class="line">    if (userAuth == null) &#123;</span><br><span class="line">        redisTemplate.delete(sessionId);</span><br><span class="line">        throw new UnauthorizedException(&quot;token 过期&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    request.setAttribute(ReqAttrKey.REQ_USER_AUTH_KEY, userAuth);</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>  拦截器PermissionInterceptor功能代码如下：<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean preHandle(HttpServletRequest request, HttpServletResponse reponse, Object handle) throws Exception &#123;</span><br><span class="line">    if (&quot;OPTIONS&quot;.equals(request.getMethod().toUpperCase())) &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    String path = request.getServletPath();</span><br><span class="line">    UserAuthDTO userAuthDTO = (UserAuthDTO) request.getAttribute(ReqAttrKey.REQ_USER_AUTH_KEY);</span><br><span class="line">    PathContainer pathContainer = PathContainer.parsePath(path);</span><br><span class="line">    PathPatternParser ppp = new PathPatternParser();</span><br><span class="line">    long matchCount = userAuthDTO.getPermissionList()</span><br><span class="line">            .stream()</span><br><span class="line">            .filter(permission -&gt; ppp.parse(permission.getResource()).matches(pathContainer) &amp;&amp;</span><br><span class="line">                   getPermissionAction(path, request.getMethod()) == permission.getAction())</span><br><span class="line">            .count();</span><br><span class="line">    if (matchCount == 0) &#123;</span><br><span class="line">        throw new AccessForbiddenException();</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>  最后，当token过期的时候，为了避免用户重新登录，这里设置了一个refreshToken，前端只需调用对应的refresh接口获取新的token即可：<br>refresh接口代码如下：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@ApiOperation(value=&quot;刷新Token&quot;, notes=&quot;刷新Token&quot;)</span><br><span class="line">@RequestMapping(value=&quot;/xxx/token/refresh&quot;, method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)</span><br><span class="line">public Reply&lt;TokenRespDTO&gt; refreshtoken(</span><br><span class="line">        @ApiParam @RequestParam(&quot;refreshToken&quot;) final String refreshToken) throws Exception &#123;</span><br><span class="line">    String newToken = JwtUtil.refreshToken(refreshToken, jwtSceret, jwtExpiredTime);</span><br><span class="line">    if (Strings.isNullOrEmpty(newToken)) &#123;</span><br><span class="line">        throw new UnauthorizedException(&quot;token 过期，请重新登录&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    String sessionId = JwtUtil.getSessionId(newToken, jwtSceret);</span><br><span class="line">    redisTemplate.expire(sessionId, jwtExpiredTime, TimeUnit.MILLISECONDS);</span><br><span class="line">    return new Reply&lt;&gt;(ReplyBizStatus.OK, &quot;success&quot;, new TokenRespDTO(newToken, refreshToken, jwtExpiredTime/1000));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>  在用户登录成功之后，首先会访问的接口是该用户所属权限下的模块（菜单信息）接口，前端再根据对应的返回数据，展示出只属于该用户的菜单模块。<br>  菜单模块接口如下：<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@ApiOperation(value=&quot;模块列表&quot;, notes=&quot;模块列表&quot;)</span><br><span class="line">@RequestMapping(value=&quot;/moudle/list&quot;, method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)</span><br><span class="line">public Reply&lt;List&lt;MoudleDTO&gt;&gt; moudleList(</span><br><span class="line">        @RequestAttribute(ReqAttrKey.REQ_USER_AUTH_KEY) UserAuthDTO userAuth) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        List&lt;PermissionDTO&gt; permissionDTOList = userAuth.getPermissionList();</span><br><span class="line">        // permissionDTOList.stream().map(tp -&gt; tp.toConvertTemp()).cocat(entityPermissionDTOList.stream().map(tp -&gt; tp.toConvertTemp()));</span><br><span class="line">        List&lt;PermissionDTO&gt; tmpPermissionAllList = new ArrayList&lt;&gt;();</span><br><span class="line">        if (permissionDTOList != null)&#123;</span><br><span class="line">            tmpPermissionAllList.addAll(permissionDTOList);</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;MoudleDTO&gt; result = new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        for (PermissionDTO tmpPermissionAll : tmpPermissionAllList)&#123;</span><br><span class="line">            MoudleDTO moudleDto = moudleService.getById(tmpPermissionAll.getMid());</span><br><span class="line">            if (!result.contains(moudleDto))&#123;</span><br><span class="line">                result.add(moudleDto);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;MoudleDTO&gt; finalResult = moudleService.getPidMoudle(result);</span><br><span class="line">        return new Reply&lt;&gt;(ReplyBizStatus.OK, &quot;success&quot;, finalResult);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>  首先在菜单是一个树形结构，且菜单的叶子节点对应的就是权限表里面对应的数据，所以这里获取菜单的操作可以理解为根据叶子节点获取整颗树的操作。上述代码中原本有一个用户登录系统的权限，还有一个具体业务的权限，然后具体业务的权限这里就直接Pass掉，原理其实一样。于是想着给系统添加一套处理树的工具类，方便之后类似 部门，菜单，地区等等这些树形结构的处理：<br>   工具类中一些简单的处理方法就直接Pass掉，这里主要来理清一下深度优先遍历和广度优先遍历这两种对树的子节点遍历方法。</p>
+<p>   随便画了一个二叉树作为例子：<br>      <img src="https://github.com/JPFrank/image/blob/master/lc.jpg" alt="Image discription"></p>
+<p>   深度优先遍历,首先会使用到Stack栈这种数据类型，特点是数据先进后出；<br>   其次我们来通过分析取子节点的流程来解释如何做到深度优先的：<br>   1.我们这里需要有一个大致的思路，首先深度优先，这里取值的顺序必然是1-2-4-8-5-3-6-9-10-7；<br>   2.这里以<strong>___</strong>;代表栈； 10用X代替～～～</p>
+<p>   入栈出栈的操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1.  ______________;  初始化为空</span><br><span class="line">2.  _____________1;  第一个节点入栈</span><br><span class="line">3.  ____________23;  1出栈，找出1的子节点2,3, 23进栈</span><br><span class="line">4.  ___________453;  2出栈，找出2的子节点4,5, 45进栈</span><br><span class="line">5.  ___________853;  4出栈, 找到4的子节点8，8进栈</span><br><span class="line">6.  ____________53;  8出栈, 8为叶子节点，无其他入栈</span><br><span class="line">7.  _____________3;  5出栈, 5为叶子节点，无其他入栈</span><br><span class="line">8.  ____________67;  3出栈, 找到叶子节点6,7 67入栈</span><br><span class="line">9.  ___________9X7;  6出栈, 找到叶子节点9,10, 9,10入栈</span><br><span class="line">10. ____________X7;  9出栈, 9为叶子节点，无其他入栈</span><br><span class="line">11. _____________7;  10出栈, 10为叶子节点，无其他入栈</span><br><span class="line">12. ______________;  7出栈, 7为叶子节点，无其他入栈</span><br></pre></td></tr></table></figure>
+
+<p> 至此遍历完所有1节点的所有子节点，然后查看所有节点出栈的顺序，即是之前猜想的。<br> 深度优先我的理解为首先一条路走到黑，然后利用栈的数据结构特点，能够组装节点访问的顺序，走到黑回退到上一步的时候很自然方便（自己粗俗的理解）。<br>   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class DeepWalkTree&lt;T extends BaseNode&gt; extends Tree&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">     public DeepWalkTree(List&lt;T&gt; nodes)&#123;</span><br><span class="line">       super(nodes);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     @Override</span><br><span class="line">     public List&lt;T&gt; findAllChildren(T node) &#123;</span><br><span class="line">       Stack &lt;T&gt; treeStack = new Stack&lt;&gt;();</span><br><span class="line">       List&lt;T&gt; childrenNodes = new ArrayList&lt;&gt;();</span><br><span class="line">       treeStack.add(node);</span><br><span class="line">       while (!treeStack.isEmpty()) &#123;</span><br><span class="line">           T tmpNode = treeStack.pop();</span><br><span class="line">           List&lt;T&gt; snodes = findChildren(tmpNode);</span><br><span class="line">           if (!snodes.isEmpty())&#123;</span><br><span class="line">               childrenNodes.addAll(snodes);</span><br><span class="line">           &#125;</span><br><span class="line">           for (T snode : snodes)&#123;</span><br><span class="line">               treeStack.add(snode);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       return childrenNodes;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>   上述代码直接在每次弹出节点的时候获取子节点并Add到对应返回数据，其实和弹出节点时ADD是一个原理。</p>
+<p>   有待补充的地方：<br>      1.前序中序后序；<br>      2.树的遍历其他方法；<br>      3.数据结构+算法（书籍）；</p>
+<p>  广度优先遍历的思路为递归，递归结束条件为最后一层的节点为叶子节点（再无子节点）。<br>  广度优先遍历的代码如下：<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class WideWalkTree&lt;T extends BaseNode&gt; extends Tree&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">    public WideWalkTree(List&lt;T&gt; nodes)&#123;</span><br><span class="line">        super(nodes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public List&lt;T&gt; findAllChildren(T node) &#123;</span><br><span class="line">    List&lt;T&gt; childrenNodes = new ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;T&gt; anodes = new ArrayList&lt;&gt;();</span><br><span class="line">    anodes = findChildren(node);</span><br><span class="line">    childrenNodes.addAll(anodes);</span><br><span class="line">    while (!anodes.isEmpty())&#123;</span><br><span class="line">        List&lt;T&gt; cnodes = new ArrayList&lt;&gt;();</span><br><span class="line">        for (T anode : anodes)&#123;</span><br><span class="line">            cnodes.addAll(findChildren(anode));</span><br><span class="line">        &#125;</span><br><span class="line">     childrenNodes.addAll(cnodes);</span><br><span class="line">        anodes = cnodes;</span><br><span class="line">      &#125;</span><br><span class="line">    return childrenNodes;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> 这里的菜单模块接口，给权限控制系统第一层保证，能够现在在前端页面该用户能够发送请求的范围，这也是权限在前端页面的具体体现；然后后台系统中也有完整的鉴权验权机制，权限控制设计的思路大致为上面的一系列介绍，如果有什么缺陷和遗漏的地方，还希望大家多多提点提点。</p>
+<p> 参考文档: <br><br>    <a href="https://www.jianshu.com/p/4339eea38c81" target="_blank" rel="noopener">https://www.jianshu.com/p/4339eea38c81</a></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SoftUniversalComponents</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/心得//" class="article-tag-list-link color3">心得</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/07/24/permission/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2019/07/24/sorters/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          sorters
+        
+      </div>
+    </a>
   
   
-    </div></section>
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -217,8 +398,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
@@ -285,6 +466,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SoftUniversalComponents</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
